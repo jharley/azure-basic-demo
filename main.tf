@@ -144,7 +144,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
         disable_password_authentication = true
         ssh_keys {
             path     = "/home/azureuser/.ssh/authorized_keys"
-            key_data = "ssh-rsa AAAAB3Nz{snip}hwhqT9h"
+            key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFBtuGFG8oTzL1yYxle2+s6Icuq28tN/nplF0MRMcAHhE/IPILp8d0plsIgGCW/KGRvhE+EdpU5GBQWJIeKaG679WgJp5dTuz1BYunonoslZbOSLxL+50eXw4lixexUhxLfzC5pcPgC9riAG/3oiLOREPMKhsoPeYqFDrxF+SWd0lATGHZ6lQjFL5s2Z/o/GOPxg1RFZVUoTm7yv6AB3joPzCGaQh+hrIb9DKMK4+lK7T+D3oMfVB0bbe9FLDMuT2b4zw4/+XicMMWSSEeuRYEIASFanab60Bz5n2gvO3oiZu+fj04h/AFnx6K+52w2vm6Os1XwABzP0y3Szearhxzof0Rv7s54lHxwl2Y5+Kq8+Xp6F+I3qV+wsS83kGT/OcDeSLeSuCXE9iMms8HgQnTafwPm31oXaBQgbyyQDhsPJ+f0g+DNSn0XFx2utKU9LYbekAFjIlWMKGLBpS0AsoPhUTmd0LaxdxxkoLpeG9q4K9Dg+MHJM50CchmVapqRK8Wmgvj9rWhcJqVdR+RfC+XeClPaOggfssaJwmgH4GH8+r2Utj72yb00OxvVgAt+1W+LnPUBV7mC+bp57UW0rknoQjsTZNozXAkuazG8N77hovud/DOs0g0McJejTnPguEPL0opseC0FSrxhHrCj9x5HBQ1CKDglwU/djCehqZJ2w== fraserpol@gmail.com"
         }
     }
 
