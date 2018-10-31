@@ -114,7 +114,7 @@ resource "azurerm_storage_account" "mystorageaccount" {
 
 # Create virtual machine
 resource "azurerm_virtual_machine" "myterraformvm" {
-  name                  = "myVM"
+  name                  = "demovm"
   location              = "eastus"
   resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
   network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
@@ -135,7 +135,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
   }
 
   os_profile {
-    computer_name  = "myvm"
+    computer_name  = "demovm"
     admin_username = "azureuser"
   }
 
