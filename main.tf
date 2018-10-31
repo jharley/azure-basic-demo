@@ -3,157 +3,157 @@ variable "resourcename" {
 }
 
 # Configure the Microsoft Azure Provider
-provider "azurerm" {
-}
+provider "azurerm" {}
 
 # Create a resource group if it doesn’t exist
 resource "azurerm_resource_group" "myterraformgroup" {
-    name     = "myResourceGroup"
-    location = "eastus"
+  name     = "myResourceGroup"
+  location = "eastus"
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  tags {
+    environment = "Terraform Demo"
+  }
 }
 
 # Create virtual network
 resource "azurerm_virtual_network" "myterraformnetwork" {
-    name                = "myVnet"
-    address_space       = ["10.0.0.0/16"]
-    location            = "eastus"
-    resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
+  name                = "myVnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = "eastus"
+  resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  tags {
+    environment = "Terraform Demo"
+  }
 }
 
 # Create subnet
 resource "azurerm_subnet" "myterraformsubnet" {
-    name                 = "mySubnet"
-    resource_group_name  = "${azurerm_resource_group.myterraformgroup.name}"
-    virtual_network_name = "${azurerm_virtual_network.myterraformnetwork.name}"
-    address_prefix       = "10.0.1.0/24"
+  name                 = "mySubnet"
+  resource_group_name  = "${azurerm_resource_group.myterraformgroup.name}"
+  virtual_network_name = "${azurerm_virtual_network.myterraformnetwork.name}"
+  address_prefix       = "10.0.1.0/24"
 }
 
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
-    name                         = "myPublicIP"
-    location                     = "eastus"
-    resource_group_name          = "${azurerm_resource_group.myterraformgroup.name}"
-    public_ip_address_allocation = "dynamic"
+  name                         = "myPublicIP"
+  location                     = "eastus"
+  resource_group_name          = "${azurerm_resource_group.myterraformgroup.name}"
+  public_ip_address_allocation = "dynamic"
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  tags {
+    environment = "Terraform Demo"
+  }
 }
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
-    name                = "myNetworkSecurityGroup"
-    location            = "eastus"
-    resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
+  name                = "myNetworkSecurityGroup"
+  location            = "eastus"
+  resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
 
-    security_rule {
-        name                       = "SSH"
-        priority                   = 1001
-        direction                  = "Inbound"
-        access                     = "Allow"
-        protocol                   = "Tcp"
-        source_port_range          = "*"
-        destination_port_range     = "22"
-        source_address_prefix      = "*"
-        destination_address_prefix = "*"
-    }
+  security_rule {
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  tags {
+    environment = "Terraform Demo"
+  }
 }
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
-    name                      = "myNIC"
-    location                  = "eastus"
-    resource_group_name       = "${azurerm_resource_group.myterraformgroup.name}"
-    network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
+  name                      = "myNIC"
+  location                  = "eastus"
+  resource_group_name       = "${azurerm_resource_group.myterraformgroup.name}"
+  network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
-    ip_configuration {
-        name                          = "myNicConfiguration"
-        subnet_id                     = "${azurerm_subnet.myterraformsubnet.id}"
-        private_ip_address_allocation = "dynamic"
-        public_ip_address_id          = "${azurerm_public_ip.myterraformpublicip.id}"
-    }
+  ip_configuration {
+    name                          = "myNicConfiguration"
+    subnet_id                     = "${azurerm_subnet.myterraformsubnet.id}"
+    private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = "${azurerm_public_ip.myterraformpublicip.id}"
+  }
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  tags {
+    environment = "Terraform Demo"
+  }
 }
 
 # Generate random text for a unique storage account name
 resource "random_id" "randomId" {
-    keepers = {
-        # Generate a new ID only when a new resource group is defined
-        resource_group = "${azurerm_resource_group.myterraformgroup.name}"
-    }
+  keepers = {
+    # Generate a new ID only when a new resource group is defined
+    resource_group = "${azurerm_resource_group.myterraformgroup.name}"
+  }
 
-    byte_length = 8
+  byte_length = 8
 }
 
 # Create storage account for boot diagnostics
 resource "azurerm_storage_account" "mystorageaccount" {
-    name                        = "diag${random_id.randomId.hex}"
-    resource_group_name         = "${azurerm_resource_group.myterraformgroup.name}"
-    location                    = "eastus"
-    account_tier                = "Standard"
-    account_replication_type    = "LRS"
+  name                     = "diag${random_id.randomId.hex}"
+  resource_group_name      = "${azurerm_resource_group.myterraformgroup.name}"
+  location                 = "eastus"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  tags {
+    environment = "Terraform Demo"
+  }
 }
 
 # Create virtual machine
 resource "azurerm_virtual_machine" "myterraformvm" {
-    name                  = "myVM"
-    location              = "eastus"
-    resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
-    network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
-    vm_size               = "Standard_DS1_v2"
+  name                  = "myVM"
+  location              = "eastus"
+  resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
+  network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
+  vm_size               = "Standard_DS1_v2"
 
-    storage_os_disk {
-        name              = "myOsDisk"
-        caching           = "ReadWrite"
-        create_option     = "FromImage"
-        managed_disk_type = "Premium_LRS"
-    }
+  storage_os_disk {
+    name              = "myOsDisk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Premium_LRS"
+  }
 
-    storage_image_reference {
-        publisher = "Canonical"
-        offer     = "UbuntuServer"
-        sku       = "16.04.0-LTS"
-        version   = "latest"
-    }
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04.0-LTS"
+    version   = "latest"
+  }
 
-    os_profile {
-        computer_name  = "myvm"
-        admin_username = "azureuser"
-    }
+  os_profile {
+    computer_name  = "myvm"
+    admin_username = "azureuser"
+  }
 
-    os_profile_linux_config {
-        disable_password_authentication = true
-        ssh_keys {
-            path     = "/home/azureuser/.ssh/authorized_keys"
-            key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFBtuGFG8oTzL1yYxle2+s6Icuq28tN/nplF0MRMcAHhE/IPILp8d0plsIgGCW/KGRvhE+EdpU5GBQWJIeKaG679WgJp5dTuz1BYunonoslZbOSLxL+50eXw4lixexUhxLfzC5pcPgC9riAG/3oiLOREPMKhsoPeYqFDrxF+SWd0lATGHZ6lQjFL5s2Z/o/GOPxg1RFZVUoTm7yv6AB3joPzCGaQh+hrIb9DKMK4+lK7T+D3oMfVB0bbe9FLDMuT2b4zw4/+XicMMWSSEeuRYEIASFanab60Bz5n2gvO3oiZu+fj04h/AFnx6K+52w2vm6Os1XwABzP0y3Szearhxzof0Rv7s54lHxwl2Y5+Kq8+Xp6F+I3qV+wsS83kGT/OcDeSLeSuCXE9iMms8HgQnTafwPm31oXaBQgbyyQDhsPJ+f0g+DNSn0XFx2utKU9LYbekAFjIlWMKGLBpS0AsoPhUTmd0LaxdxxkoLpeG9q4K9Dg+MHJM50CchmVapqRK8Wmgvj9rWhcJqVdR+RfC+XeClPaOggfssaJwmgH4GH8+r2Utj72yb00OxvVgAt+1W+LnPUBV7mC+bp57UW0rknoQjsTZNozXAkuazG8N77hovud/DOs0g0McJejTnPguEPL0opseC0FSrxhHrCj9x5HBQ1CKDglwU/djCehqZJ2w== fraserpol@gmail.com"
-        }
-    }
+  os_profile_linux_config {
+    disable_password_authentication = true
 
-    boot_diagnostics {
-        enabled = "true"
-        storage_uri = "${azurerm_storage_account.mystorageaccount.primary_blob_endpoint}"
+    ssh_keys {
+      path     = "/home/azureuser/.ssh/authorized_keys"
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFBtuGFG8oTzL1yYxle2+s6Icuq28tN/nplF0MRMcAHhE/IPILp8d0plsIgGCW/KGRvhE+EdpU5GBQWJIeKaG679WgJp5dTuz1BYunonoslZbOSLxL+50eXw4lixexUhxLfzC5pcPgC9riAG/3oiLOREPMKhsoPeYqFDrxF+SWd0lATGHZ6lQjFL5s2Z/o/GOPxg1RFZVUoTm7yv6AB3joPzCGaQh+hrIb9DKMK4+lK7T+D3oMfVB0bbe9FLDMuT2b4zw4/+XicMMWSSEeuRYEIASFanab60Bz5n2gvO3oiZu+fj04h/AFnx6K+52w2vm6Os1XwABzP0y3Szearhxzof0Rv7s54lHxwl2Y5+Kq8+Xp6F+I3qV+wsS83kGT/OcDeSLeSuCXE9iMms8HgQnTafwPm31oXaBQgbyyQDhsPJ+f0g+DNSn0XFx2utKU9LYbekAFjIlWMKGLBpS0AsoPhUTmd0LaxdxxkoLpeG9q4K9Dg+MHJM50CchmVapqRK8Wmgvj9rWhcJqVdR+RfC+XeClPaOggfssaJwmgH4GH8+r2Utj72yb00OxvVgAt+1W+LnPUBV7mC+bp57UW0rknoQjsTZNozXAkuazG8N77hovud/DOs0g0McJejTnPguEPL0opseC0FSrxhHrCj9x5HBQ1CKDglwU/djCehqZJ2w== fraserpol@gmail.com"
     }
+  }
 
-    tags {
-        environment = "Terraform Demo"
-    }
+  boot_diagnostics {
+    enabled     = "true"
+    storage_uri = "${azurerm_storage_account.mystorageaccount.primary_blob_endpoint}"
+  }
+
+  tags {
+    environment = "Terraform Demo"
+  }
 }
