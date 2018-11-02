@@ -118,7 +118,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
   location              = "eastus"
   resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
   network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = "Standard_B4ms"
 
   storage_os_disk {
     name              = "myOsDisk"
@@ -142,6 +142,7 @@ resource "azurerm_virtual_machine" "myterraformvm" {
   os_profile_linux_config {
     disable_password_authentication = true
 
+    # Inject SSH key via Profile Manager
     ssh_keys {
       path     = "/home/azureuser/.ssh/authorized_keys"
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDEdl05serElqj77AvBjkDKzAbPiwVd02QUb2ecXtMJtA1lKerVfdkCJMecDOFPRV3ofaWxW2qt71t7am8mvXDJbHjpiIFoyb1uARTmbdWvoNJvzNnYsHdPyS7Sbo2Odt2Xt9c35Hp/FYlUEV6mT1s8ffhBPzI6KM2QW2SKujyQP2joWYRA5gIKlilNcjaqRz8+ExpZ6hgCNGowQHfRkr1pjiSPDCD12p5AAL17xjW5ODZnhIHkrN4aYdaB0scBdr25ATEhjAv15lUghkaeJnBzBbTjH/u+4vLYwO9JHjhlwnl1UUeWH1JhGDZhvJXHdw/wqHGebKgVM3EicFzV5TjZ jharley@hashicorp.com"
