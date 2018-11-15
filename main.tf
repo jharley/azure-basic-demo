@@ -7,7 +7,7 @@ provider "azurerm" {}
 
 # Create a resource group if it doesn’t exist
 resource "azurerm_resource_group" "myterraformgroup" {
-  name     = "myResourceGroup"
+  name     = "jharley-myResourceGroup"
   location = "eastus"
 
   tags {
@@ -17,7 +17,7 @@ resource "azurerm_resource_group" "myterraformgroup" {
 
 # Create virtual network
 resource "azurerm_virtual_network" "myterraformnetwork" {
-  name                = "myVnet"
+  name                = "jharley-myVnet"
   address_space       = ["10.0.0.0/16"]
   location            = "eastus"
   resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
@@ -29,7 +29,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 
 # Create subnet
 resource "azurerm_subnet" "myterraformsubnet" {
-  name                 = "mySubnet"
+  name                 = "jharley-mySubnet"
   resource_group_name  = "${azurerm_resource_group.myterraformgroup.name}"
   virtual_network_name = "${azurerm_virtual_network.myterraformnetwork.name}"
   address_prefix       = "10.0.1.0/24"
@@ -37,7 +37,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
-  name                         = "myPublicIP"
+  name                         = "jharley-myPublicIP"
   location                     = "eastus"
   resource_group_name          = "${azurerm_resource_group.myterraformgroup.name}"
   public_ip_address_allocation = "dynamic"
@@ -49,7 +49,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
-  name                = "myNetworkSecurityGroup"
+  name                = "jharley-myNetworkSecurityGroup"
   location            = "eastus"
   resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
 
@@ -72,7 +72,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
-  name                      = "myNIC"
+  name                      = "jharley-myNIC"
   location                  = "eastus"
   resource_group_name       = "${azurerm_resource_group.myterraformgroup.name}"
   network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
@@ -114,7 +114,7 @@ resource "azurerm_storage_account" "mystorageaccount" {
 
 # Create virtual machine
 resource "azurerm_virtual_machine" "myterraformvm" {
-  name                  = "demovm"
+  name                  = "jharley-demovm"
   location              = "eastus"
   resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
   network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
